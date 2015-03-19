@@ -44,8 +44,8 @@ def answer(question_id):
     question = Question.query.filter_by(id=question_id).first()
     if form.validate_on_submit():
         answer = Answer(reply=form.answer.data, user_id=current_user.id, question_id=question_id)
-        db.session.add(answer)
         answer.reset()
+        db.session.add(answer)
         db.session.commit()
         return redirect(url_for('.questions'))
     return render_template('answer.html', form=form, question=question)
@@ -56,6 +56,8 @@ def answer(question_id):
 def vote(answer_id):
     answer = Answer.query.filter_by(id=answer_id).first()
     current_user.vote(answer)
+    db.session.add(current_user)
+    db.session.commit()
     return redirect(request.referrer or url_for('.user', username=answer.user.username))
 
 @main.route('/unvote/<answer_id>', methods=['GET', 'POST'])
@@ -63,6 +65,8 @@ def vote(answer_id):
 def unvote(answer_id):
     answer = Answer.query.filter_by(id=answer_id).first()
     current_user.unvote(answer)
+    db.session.add(current_user)
+    db.session.commit()
     return redirect(request.referrer or url_for('.user', username=answer.user.username))
 
 
@@ -95,6 +99,8 @@ def follow(username):
         flash('You are already following this user.')
         return redirect(url_for('.user', username=username))
     current_user.follow(user)
+    db.session.add(user)
+    db.session.commit()
     flash('You are now following %s.' % username)
     return redirect(url_for('.user', username=username))
 
@@ -110,6 +116,8 @@ def unfollow(username):
         flash('You are not following this user.')
         return redirect(url_for('.user', username=username))
     current_user.unfollow(user)
+    db.session.add(user)
+    db.session.commit()
     flash('You are not following %s anymore.' % username)
     return redirect(url_for('.user', username=username))
 
