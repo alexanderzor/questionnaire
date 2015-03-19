@@ -1,4 +1,4 @@
-from flask import jsonify, render_template, redirect, url_for, flash, request
+from flask import jsonify, render_template, redirect, url_for, flash, request, abort
 from flask.ext.login import login_user, logout_user, login_required, current_user
 from .forms import AskForm, AnswerForm, EditProfileForm
 from ..models import User, Question, Answer
@@ -21,6 +21,8 @@ def index():
 def user(username):
     form = AskForm()
     user = User.query.filter_by(username=username).first()
+    if not user:
+        abort(404)
     if form.validate_on_submit():
         question = Question(quest=form.ask.data, user_id=user.id)
         db.session.add(question)
