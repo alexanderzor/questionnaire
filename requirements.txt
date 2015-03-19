@@ -1,0 +1,16 @@
+Flask
+Flask-WTF
+Jinja2
+MarkupSafe
+WTForms
+Werkzeug
+itsdangerous
+flask-sqlalchemy
+flask-login
+flask-bootstrap
+flask-moment
+flask-migrate
+flask-script
+alembic
+gunicorn
+psycopg2
