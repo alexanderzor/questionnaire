@@ -1,44 +1,32 @@
-from flask import session, redirect, url_for, render_template, flash, request, jsonify
+from flask import jsonify, render_template, redirect, url_for, flash, request
 from flask.ext.login import login_user, logout_user, login_required, current_user
-from . import main
 from .forms import AskForm, AnswerForm, EditProfileForm
-from app import db
 from ..models import User, Question, Answer
-
-from flask import render_template, redirect, url_for, abort, flash, request
-
 from . import main
-
 from .. import db
 
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
+    users = User.query.all()
     if current_user.is_authenticated():
         query = current_user.followed_answers
         answers = query.order_by(Answer.timestamp.desc()).all()
     else:
         answers = []
-    return render_template('index.html', answers=answers)
+    return render_template('index.html', answers=answers, users=users)
 
 
 @main.route('/user/<username>', methods=['GET', 'POST'])
 def user(username):
     form = AskForm()
     user = User.query.filter_by(username=username).first()
-    questions = Question.query.filter_by(user_id=user.id).all()
     if form.validate_on_submit():
-
-
         question = Question(quest=form.ask.data, user_id=user.id)
         db.session.add(question)
         db.session.commit()
         return redirect(url_for('.user', username=username))
     answers = Answer.query.filter_by(user_id=user.id).order_by(Answer.timestamp.desc()).all()
-
-
-
-
     return render_template('user.html', form=form, user=user, answers=answers)
 
 
@@ -46,8 +34,6 @@ def user(username):
 @login_required
 def questions():
     questions = current_user.questions.filter_by(answer=None).order_by(Question.timestamp.desc()).all()
-
-
     return render_template('questions.html', questions=questions)
 
 
@@ -57,12 +43,10 @@ def answer(question_id):
     form = AnswerForm()
     question = Question.query.filter_by(id=question_id).first()
     if form.validate_on_submit():
-
-
         answer = Answer(reply=form.answer.data, user_id=current_user.id, question_id=question_id)
         db.session.add(answer)
-        db.session.commit()
         answer.reset()
+        db.session.commit()
         return redirect(url_for('.questions'))
     return render_template('answer.html', form=form, question=question)
 
@@ -72,17 +56,14 @@ def answer(question_id):
 def vote(answer_id):
     answer = Answer.query.filter_by(id=answer_id).first()
     current_user.vote(answer)
-
-
-    return redirect(url_for('.user', username=answer.user.username))
+    return redirect(request.referrer or url_for('.user', username=answer.user.username))
 
 @main.route('/unvote/<answer_id>', methods=['GET', 'POST'])
 @login_required
 def unvote(answer_id):
     answer = Answer.query.filter_by(id=answer_id).first()
     current_user.unvote(answer)
-
-    return redirect(url_for('.user', username=answer.user.username))
+    return redirect(request.referrer or url_for('.user', username=answer.user.username))
 
 
 @main.route('/edit-profile', methods=['GET', 'POST'])

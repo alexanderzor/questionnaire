@@ -5,37 +5,20 @@
 
 {% block page_content %}
 
-    <div class="page-header">
-        <h2>Questions</h2>
-    </div>
-
+    <div class="container-fluid">
+        <div class="page-header">
+            <h2>Questions</h2>
+        </div>
         {% for question in questions %}
-    <div class = "well col-md-8 answer">
-
-            <div>
-                <div class="lead">
-                <textarea  readonly rows = "3" style="width: 700px"> {{question.quest}} </textarea>
-
-
-                    </div>
-
-                <div class="post-date small col-md-4">{{ moment(question.timestamp).fromNow() }}</div>
-                <div class="text-right">
-
+        <div class = "well col-md-8">
+            <div class="lead">
+                <div class="answer">{{question.quest}}</div>
+            </div>
+            <div class="post-date small col-md-4">{{ moment(question.timestamp).fromNow() }}</div>
+            <div class="text-right">
                 <a href="{{ url_for('main.answer', question_id=question.id) }}" class="btn btn-default">Answer</a>
-                </div>
-
-
-
             </div>
         </div>
-
-
         {%endfor %}
-
-
-
-
-
-
+    </div>
 {% endblock %}

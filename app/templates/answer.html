@@ -4,15 +4,11 @@
 {% block title %}Answer{% endblock %}
 
 {% block page_content %}
-
-
     <div class = "well col-md-8">
         <div class="lead">
-        {{question.quest}}<br>
+            <div class="answer">{{question.quest}}</div><br>
         </div>
         {{ wtf.quick_form(form) }}
-            </div>
-
-
+    </div>
 
 {% endblock %}

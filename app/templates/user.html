@@ -4,32 +4,64 @@
 {% block title %}{{current_user.username}}{% endblock %}
 
 {% block page_content %}
-{% if current_user.is_authenticated() %}
-<div class = "well col-md-8">
-{{ wtf.quick_form(form) }}
-</div>
-<br>
-{% for answer in answers %}
-<div class = "well col-md-8">
-<div class="lead">
-<textarea  readonly rows = "3" style="width: 700px"> {{answer.question.quest}} </textarea>
-</div>
-<strong>{{ answer.reply }}</strong><br><br>
-<div>
-<div class="post-date small col-md-4">{{ moment(answer.timestamp).fromNow() }}</div>
-<div class="text-right">
-{% if current_user.is_authenticated() %}
-{% if not current_user.has_voted(answer) %}
-<a href="{{ url_for('.vote', answer_id = answer.id) }}"><span class="glyphicon glyphicon-thumbs-up"></span></a>
-{% endif %}
-{% if current_user.has_voted(answer) %}
-<a href="{{ url_for('.unvote', answer_id = answer.id) }}"><span class="glyphicon glyphicon-thumbs-down"></span></a>
-{% endif %}
-{% endif %}
-<span class="badge">{{ answer.voters.count() }}</span>
-</div>
-</div>
-</div>
-{% endfor %}
-{% endif %}
+    <div class="container-fluid">
+        <div class = "col-md-8">
+            {% if current_user.is_authenticated() %}
+                <div class = "well col-md-12">
+                    {{ wtf.quick_form(form) }}
+                    <br>
+                </div>
+            {% endif %}
+            {% for answer in answers %}
+                <div class = "well col-md-12">
+                    <b><div class="answer">{{answer.question.quest}}</div><br></b>
+                    <div class="answer">{{answer.reply}}</div><br>
+                    <div class="post-date small col-md-4">{{ moment(answer.timestamp).fromNow() }}</div>
+                    <div class="text-right">
+                        {% if current_user.is_authenticated() %}
+                            {% if not current_user.has_voted(answer) %}
+                                <a href="{{ url_for('.vote', answer_id = answer.id) }}"><span class="glyphicon glyphicon-thumbs-up"></span></a>
+                            {% endif %}
+                            {% if current_user.has_voted(answer) %}
+                                <a href="{{ url_for('.unvote', answer_id = answer.id) }}"><span class="glyphicon glyphicon-thumbs-down"></span></a>
+                            {% endif %}
+                        {% endif %}
+                        <span class="badge">{{ answer.voters.count() }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class = "col-md-4">
+            <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=128) }}">
+            <h1>{{ user.username }}</h1>
+            {% if user.name or user.location %}
+                <p>
+                    {% if user.name %}{{ user.name }}{% endif %}
+                    {% if user.location %}
+                        From <a href="http://maps.google.com/?q={{ user.location }}">{{ user.location }}</a>
+                    {% endif %}
+                </p>
+            {% endif %}
+            {% if user.about_me %}<div class="answer">{{ user.about_me }}</div>{% endif %}
+            <p>
+                Member since: {{ moment(user.member_since).format('MMM Do YY') }}.<br>
+                Last seen {{ moment(user.last_seen).fromNow() }}.
+            </p>
+            {% if user == current_user %}
+                <a class="btn btn-default" href="{{ url_for('.edit_profile') }}">Edit Profile</a>
+            {% endif %}
+            {% if current_user.is_authenticated() and current_user != user %}
+                {% if not current_user.is_following(user) %}
+                    <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">Follow</a>
+                {% else %}
+                    <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-default">Unfollow</a>
+                {% endif %}
+            {% endif %}
+            <a href="{{ url_for('.followers', username=user.username) }}">Followers:<span class="badge">{{ user.followers.count() }}</span></a>
+            <a href="{{ url_for('.followed_by', username=user.username) }}">Following:<span class="badge">{{ user.followed.count() }}</span></a>
+            {% if current_user.is_authenticated() and user != current_user and
+                user.is_following(current_user) %} | <span class="label label-default">Follows you</span>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

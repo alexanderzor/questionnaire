@@ -18,7 +18,7 @@ moment = Moment()
 def create_app(debug=False):
     app = Flask(__name__)
     app.debug = debug
-    app.config['SECRET_KEY'] = 'gjr39dkjn344_!67#'
+    app.config['SECRET_KEY'] = 'fiusdidsn12$!%#G&YDS'
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or \
                                             'sqlite:///' + os.path.join(basedir, 'data.sqlite')
     app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
