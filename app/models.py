@@ -105,6 +105,11 @@ class User(UserMixin, db.Model):
                                                                      default=default,
                                                                      rating=rating)
 
+    def has_question(self):
+        return self.questions.filter_by(answer=None).all()
+
+
+
 class Question(db.Model):
     __tablename__ = 'questions'
     id = db.Column(db.Integer, primary_key=True)

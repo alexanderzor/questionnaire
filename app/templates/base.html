@@ -18,7 +18,7 @@
                 <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_authenticated() %}
                     <li><a href="{{ url_for('main.user', username=current_user.username) }}">{{current_user.username}}</a></li>
-                    <li><a href="{{ url_for('main.questions') }}">Questions</a></li>
+                    <li><a href="{{ url_for('main.questions') }}">Questions {% if current_user.has_question() %}<span class="glyphicon glyphicon-fire"></span>{% endif %}</a></li>
                     <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
                 {% else %}
                     <li><a href="{{ url_for('auth.register') }}">Register</a></li>
