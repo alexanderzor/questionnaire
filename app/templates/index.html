@@ -32,8 +32,9 @@
         {% endfor %}
     {% endif %}
     <div class="well answer">
+        Users:
         {% for u in users %}
-            <img class="img-rounded profile-thumbnail" src="{{ u.gravatar(size=20) }}"><a href="{{ url_for('main.user', username=u.username) }}">{{u.username}}</a>
+         <img class="img-rounded profile-thumbnail" src="{{ u.gravatar(size=20) }}"><a href="{{ url_for('main.user', username=u.username) }}">{{u.username}}</a>
         {% endfor %}
     </div>
 {% endblock %}
