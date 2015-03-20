@@ -44,6 +44,9 @@ def questions():
 def answer(question_id):
     form = AnswerForm()
     question = Question.query.filter_by(id=question_id).first()
+    a = Answer.query.filter_by(question_id=question_id).first()
+    if a:
+        return redirect(url_for('.questions'))
     if form.validate_on_submit():
         answer = Answer(reply=form.answer.data, user_id=current_user.id, question_id=question_id)
         answer.reset()
